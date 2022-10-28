@@ -8,16 +8,4 @@ public class Product {
         this.unitPrice = unitPrice;
         this.totalPrice = totalPrice;
     }
-
-    public String getName() {
-        return name;
-    }
-
-    public double getUnitPrice() {
-        return unitPrice;
-    }
-
-    public double getTotalPrice() {
-        return totalPrice;
-    }
 }
