@@ -62,7 +62,7 @@ public class UserInterface extends JFrame {
     header.add(box);
     box.setLayout(new GridLayout(1, 3, 5, 0));
     TextField unitPriceField = new TextField("Unit price", box);
-    TextField totalPriceField = new TextField("Total price", box);
+    TextField quantityField = new TextField("Quantity", box);
 
 
     DefaultTableModel model = new DefaultTableModel();
@@ -71,25 +71,27 @@ public class UserInterface extends JFrame {
     model.addColumn("QTY");
     model.addColumn("Description");
     model.addColumn("Unit price");
-    model.addColumn("Total");
+    model.addColumn("Quantity");
+    model.addColumn("Total price");
     JScrollPane pane = new JScrollPane(table);
     pane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
     pane.setPreferredSize(new Dimension(600, 275));
 
     Button addProduct = new Button("ADD");
     addProduct.addActionListener(e -> {
-      invoice.addProduct(descriptionField.getText(),
+      invoice.addRecord(descriptionField.getText(),
               Double.parseDouble(unitPriceField.getText()),
-              Double.parseDouble(totalPriceField.getText()));
+              Integer.parseInt(quantityField.getText()));
       model.addRow(new Object[]
-              {invoice.products.size(),
+              {invoice.records.size(),
                       descriptionField.getText(),
                       unitPriceField.getText(),
-                      totalPriceField.getText()});
+                      quantityField.getText(),
+                      invoice.records.get(invoice.records.size()-1).getTotalPrice()});
 
       descriptionField.setText("Description");
       unitPriceField.setText("Unit price");
-      totalPriceField.setText("Total price");
+      quantityField.setText("Quantity");
 
     });
     box.add(addProduct);
@@ -157,10 +159,9 @@ class Button extends JButton {
   }
 }
 
-class PersonButton extends JButton {
+class PersonButton extends Button {
   PersonButton(String text, Person person) {
-    setText(text);
-    setFocusable(false);
+    super(text);
     addActionListener(e -> {
       JPanel panel = new JPanel();
       panel.setLayout(new GridLayout(7, 1));

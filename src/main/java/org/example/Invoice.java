@@ -8,11 +8,19 @@ public class Invoice {
   Person client;
   String invoiceNumber;
   String place;
-  List<Product> products = new ArrayList<>();
+  List<Record> records = new ArrayList<>();
 
   Invoice() {
     issuer = new Person();
     client = new Person();
+  }
+
+  public String getInvoiceNumber() {
+    return invoiceNumber;
+  }
+
+  public String getPlace() {
+    return place;
   }
 
   public void setPlace(String place) {
@@ -23,8 +31,8 @@ public class Invoice {
     this.invoiceNumber = invoiceNumber;
   }
 
-  public void addProduct(String name, double unitPrice, double totalPrice) {
-    products.add(new Product(name, unitPrice, totalPrice));
+  public void addRecord(String name, double unitPrice, int quantity) {
+    records.add(new Record(name, unitPrice, quantity));
   }
 
 }

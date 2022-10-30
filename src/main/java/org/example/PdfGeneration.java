@@ -18,7 +18,7 @@ public class PdfGeneration {
   PdfGeneration(Invoice invoice) throws FileNotFoundException, DocumentException {
     this.invoice = invoice;
     document = new Document();
-    PdfWriter.getInstance(document, new FileOutputStream("C:/Users/krzym/Desktop/invoice.pdf"));
+    PdfWriter.getInstance(document, new FileOutputStream("/home/kawis/Desktop/invoice.pdf"));
 
     document.open();
 
@@ -27,11 +27,11 @@ public class PdfGeneration {
     document.add(title);
     document.add(new Phrase("\n"));
 
-    Paragraph number = new Paragraph("No: " + invoice.invoiceNumber, FontFactory.getFont(FontFactory.COURIER, 15, BaseColor.BLACK));
+    Paragraph number = new Paragraph("No: " + invoice.getInvoiceNumber(), FontFactory.getFont(FontFactory.COURIER, 15, BaseColor.BLACK));
 
     DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd");
     LocalDateTime now = LocalDateTime.now();
-    Paragraph datePlace = new Paragraph(dtf.format(now) + ", " + invoice.place, FontFactory.getFont(FontFactory.COURIER, 15, BaseColor.BLACK));
+    Paragraph datePlace = new Paragraph(dtf.format(now) + ", " + invoice.getPlace(), FontFactory.getFont(FontFactory.COURIER, 15, BaseColor.BLACK));
 
     PdfPTable table = new PdfPTable(2);
     table.setWidthPercentage(100);
@@ -79,7 +79,7 @@ public class PdfGeneration {
 class PersonParagraph extends Paragraph {
   PersonParagraph(String text, Person person) {
     super(text + "'s Info: \n"
-            + person.getName()
+            + person.getName() + " "
             + person.getSurname() + "\n"
             + person.getCountry() + ", "
             + person.getCity() + "\n"
