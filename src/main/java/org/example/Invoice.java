@@ -1,5 +1,6 @@
 package org.example;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +23,14 @@ public class Invoice {
     //GRASP - Creator
     // instances of Invoice have the initializing information for instances of Person
     client = new Person();
+
+    try {
+      new MariaDbConnect();
+      MariaDbConnect.addInvoice(this);
+    } catch (SQLException ex) {
+      throw new RuntimeException(ex);
+    }
+
   }
 
   /**

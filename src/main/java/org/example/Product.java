@@ -1,5 +1,7 @@
 package org.example;
 
+import java.sql.SQLException;
+
 /**
  * GRASP - Responsible for managing specific product.
  */
@@ -12,5 +14,13 @@ public class Product {
   /* default */ Product(final String name, final double unitPrice) {
     this.name = name;
     this.unitPrice = unitPrice;
+
+    try {
+      new MariaDbConnect();
+      MariaDbConnect.addProduct(name, unitPrice);
+    } catch (SQLException ex) {
+      throw new RuntimeException(ex);
+    }
+
   }
 }

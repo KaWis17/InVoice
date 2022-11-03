@@ -15,4 +15,5 @@ class ProgramMain {
   public static void main(final String[] args) {
     new UserInterface();
   }
+
 }
