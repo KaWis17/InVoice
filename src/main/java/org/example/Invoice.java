@@ -3,18 +3,44 @@ package org.example;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * GRASP - Responsible for managing invoice.
+ */
 public class Invoice {
-  Person issuer;
-  Person client;
-  String invoiceNumber;
-  String place;
-  List<Record> records = new ArrayList<>();
+  /* default */ Person issuer;
+  /* default */ Person client;
+  /* default */ String invoiceNumber;
+  /* default */ String place;
+  /* default */ List<Record> records = new ArrayList<>();
 
-  Invoice() {
+  //GRASP - Information expert
+  // obvious that this class knows the most about its own
+  /* default */ Invoice() {
+    //GRASP - Creator
+    // instances of Invoice have the initializing information for instances of Person
     issuer = new Person();
+    //GRASP - Creator
+    // instances of Invoice have the initializing information for instances of Person
     client = new Person();
   }
 
+  /**
+   * GRASP - Information Expert.
+   * class invoice has the most info about all the records,
+   * so it calculates total price of an invoice
+   *
+   * @return total price of all products
+   */
+  public double getTotalInvoicePrice() {
+    double total = 0;
+    for (final Record r : records) {
+      total += r.getTotalPrice();
+    }
+    return total;
+  }
+
+  //GRASP - Information expert
+  // obvious that this class knows the most about info inside getters and setters
   public String getInvoiceNumber() {
     return invoiceNumber;
   }
@@ -23,92 +49,19 @@ public class Invoice {
     return place;
   }
 
-  public void setPlace(String place) {
+  public void setPlace(final String place) {
     this.place = place;
   }
 
-  public void setInvoiceNumber(String invoiceNumber) {
+  public void setInvoiceNumber(final String invoiceNumber) {
     this.invoiceNumber = invoiceNumber;
   }
 
-  public void addRecord(String name, double unitPrice, int quantity) {
+  //GRASP - Low Coupling
+  // delegate creation of product to record, reduces dependency between classes
+  //GRASP - High Cohesion
+  // Low Coupling = High Cohesion
+  public void addRecord(final String name, final double unitPrice, final int quantity) {
     records.add(new Record(name, unitPrice, quantity));
-  }
-
-}
-
-class Person {
-  String name;
-  String surname;
-  String mail;
-  String country;
-  String city;
-  String address;
-  String phoneNumber;
-
-  Person() {
-    name = "Name";
-    surname = "Surname";
-    mail = "eMail";
-    country = "Country";
-    city = "City";
-    address = "Address";
-    phoneNumber = "Phone Number";
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public String getSurname() {
-    return surname;
-  }
-
-  public void setSurname(String surname) {
-    this.surname = surname;
-  }
-
-  public String getMail() {
-    return mail;
-  }
-
-  public void setMail(String mail) {
-    this.mail = mail;
-  }
-
-  public String getCountry() {
-    return country;
-  }
-
-  public void setCountry(String country) {
-    this.country = country;
-  }
-
-  public String getCity() {
-    return city;
-  }
-
-  public void setCity(String city) {
-    this.city = city;
-  }
-
-  public String getAddress() {
-    return address;
-  }
-
-  public void setAddress(String address) {
-    this.address = address;
-  }
-
-  public String getPhoneNumber() {
-    return phoneNumber;
-  }
-
-  public void setPhoneNumber(String phoneNumber) {
-    this.phoneNumber = phoneNumber;
   }
 }

@@ -2,29 +2,32 @@ package org.example;
 
 import com.itextpdf.text.DocumentException;
 import java.awt.BorderLayout;
-import java.awt.Font;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
+import java.io.IOException;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JTable;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.JButton;
-import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
-import java.io.IOException;
 
+/**
+ * GRASP - Responsible for managing user interface.
+ */
 public class UserInterface extends JFrame {
-  JTable table;
-  Invoice invoice;
-  TextField invoiceNumberField;
-  TextField placeField;
+  /* default */ JTable table;
+  /* default */ Invoice invoice;
+  /* default */ TextField invoiceNrField;
+  /* default */ TextField placeField;
 
-  UserInterface() {
+  //GRASP - Information expert - obvious that this class
+  // knows the most about its own
+  /* default */ UserInterface() {
+    super();
+    //GRASP - Creator
+    // instances of UserInterface have the initializing information
+    // for instances of Invoice
     invoice = new Invoice();
     setTitle("FaktUra");
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -37,35 +40,66 @@ public class UserInterface extends JFrame {
     setVisible(true);
   }
 
-  void addingInfoPanel() {
-    JPanel panel = new JPanel();
+  //GRASP - Information expert
+  // this function is adding elements to JFrame,
+  // so this class know the most about frame
+  /* default */ void addingInfoPanel() {
+    final JPanel panel = new JPanel();
     panel.setBorder(new EmptyBorder(10, 10, 10, 10));
     panel.setLayout(new GridLayout(2, 2, 15, 15));
-    invoiceNumberField = new TextField("Invoice number", panel);
+    invoiceNrField = new TextField("Invoice number", panel);
     placeField = new TextField("Place", panel);
 
-    PersonButton issuerButton = new PersonButton("Issuer's details", invoice.issuer);
-    PersonButton clientButton = new PersonButton("Client's details", invoice.client);
+    //GRASP - Creator
+    // instances of UserInterface closely use instances of PersonButton
+    final PersonButton issuerButton = new PersonButton("Issuer's details", invoice.issuer);
+    //GRASP - Creator
+    // instances of UserInterface closely use instances of PersonButton
+    final PersonButton clientButton = new PersonButton("Client's details", invoice.client);
 
     panel.add(issuerButton);
     panel.add(clientButton);
     add(panel, BorderLayout.NORTH);
   }
 
-  void addingProductsPanel() {
-    JPanel panel = new JPanel();
-    JPanel header = new JPanel();
+  //GRASP - Information expert
+  // this function is adding elements to JFrame,
+  // so this class know the most about frame
+  /* default */ void addingProductsPanel() {
+    final JPanel panel = new JPanel();
+    final JPanel header = new JPanel();
+    panel.add(header);
     header.setPreferredSize(new Dimension(600, 125));
     header.setLayout(new GridLayout(2, 1, 0, 5));
-    TextField descriptionField = new TextField("Description", header);
-    JPanel box = new JPanel();
+    //GRASP - Creator - instances of UserInterface closely use instances of TextField
+    final TextField descriptionField = new TextField("Description", header);
+    final JPanel box = new JPanel();
     header.add(box);
     box.setLayout(new GridLayout(1, 3, 5, 0));
-    TextField unitPriceField = new TextField("Unit price", box);
-    TextField quantityField = new TextField("Quantity", box);
+    //GRASP - Creator - instances of UserInterface closely use instances of TextField
+    final TextField unitPriceField = new TextField("Unit price", box);
+    //GRASP - Creator - instances of UserInterface closely use instances of TextField
+    final TextField quantityField = new TextField("Quantity", box);
+
+    final DefaultTableModel model = new DefaultTableModel();
+    //GRASP - Creator - instances of UserInterface closely use instances of Button
+    final Button addProduct = new Button("ADD");
+    addProduct.addActionListener(e -> {
+      invoice.addRecord(descriptionField.getText(),
+              Double.parseDouble(unitPriceField.getText()),
+              Integer.parseInt(quantityField.getText()));
+      model.addRow(new Object[]{invoice.records.size(),
+              descriptionField.getText(),
+              unitPriceField.getText(),
+              quantityField.getText(),
+              invoice.records.get(invoice.records.size() - 1).getTotalPrice()});
+      descriptionField.setText("Description");
+      unitPriceField.setText("Unit price");
+      quantityField.setText("Quantity");
+
+    });
 
 
-    DefaultTableModel model = new DefaultTableModel();
     table = new JTable(model);
     table.setDefaultEditor(Object.class, null);
     model.addColumn("QTY");
@@ -73,116 +107,39 @@ public class UserInterface extends JFrame {
     model.addColumn("Unit price");
     model.addColumn("Quantity");
     model.addColumn("Total price");
-    JScrollPane pane = new JScrollPane(table);
+    final JScrollPane pane = new JScrollPane(table);
     pane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
     pane.setPreferredSize(new Dimension(600, 275));
 
-    Button addProduct = new Button("ADD");
-    addProduct.addActionListener(e -> {
-      invoice.addRecord(descriptionField.getText(),
-              Double.parseDouble(unitPriceField.getText()),
-              Integer.parseInt(quantityField.getText()));
-      model.addRow(new Object[]
-              {invoice.records.size(),
-                      descriptionField.getText(),
-                      unitPriceField.getText(),
-                      quantityField.getText(),
-                      invoice.records.get(invoice.records.size()-1).getTotalPrice()});
-
-      descriptionField.setText("Description");
-      unitPriceField.setText("Unit price");
-      quantityField.setText("Quantity");
-
-    });
     box.add(addProduct);
 
-    panel.add(header);
     panel.add(pane);
     this.add(panel, BorderLayout.CENTER);
   }
 
-  void generateButton() {
-    JPanel panel = new JPanel();
-    Button button = new Button("Generate");
+  //GRASP - Information expert
+  // this function is adding elements to JFrame,
+  // so this class know the most about frame
+  /* default */ void generateButton() {
+    final JPanel panel = new JPanel();
+    //GRASP - Creator - instances of UserInterface closely use instances of Button
+    final Button button = new Button("Generate");
     panel.add(button);
     button.addActionListener(e -> {
-      //BufferedImage tableImage = new BufferedImage(table.getWidth(), table.getHeight(), BufferedImage.TYPE_INT_RGB);
-
-      invoice.setInvoiceNumber(invoiceNumberField.getText());
+      invoice.setInvoiceNumber(invoiceNrField.getText());
       invoice.setPlace(placeField.getText());
 
       try {
-        PdfGeneration generatePDF = new PdfGeneration(invoice);
-        generatePDF.writingToPdf(table);
+        //GRASP - Creator
+        // instances of UserInterface have the initializing information
+        // for instances of PdfGeneration
+        final PdfGeneration generatePdf = new PdfGeneration(invoice);
+        generatePdf.writingToPdf(table);
       } catch (DocumentException | IOException ex) {
         throw new RuntimeException(ex);
       }
     });
     this.add(panel, BorderLayout.SOUTH);
-  }
-}
-
-class TextField extends JTextField {
-  String defaultText;
-
-  TextField(String defaultText, JPanel panel) {
-    super(1);
-    this.defaultText = defaultText;
-    setText(defaultText);
-    setHorizontalAlignment(CENTER);
-    setPreferredSize(new Dimension(200, 50));
-    panel.add(this);
-    addFocusListener(new FocusListener() {
-      @Override
-      public void focusLost(FocusEvent e) {
-        if ("".equals(getText())) {
-          setText(defaultText);
-        }
-      }
-
-      @Override
-      public void focusGained(FocusEvent e) {
-        if (getText().trim().equals(defaultText)) {
-          setText("");
-        }
-      }
-    });
-
-    setFont(new Font(Font.DIALOG, Font.PLAIN, 15));
-  }
-}
-
-class Button extends JButton {
-  Button(String text) {
-    setText(text);
-    setFocusable(false);
-  }
-}
-
-class PersonButton extends Button {
-  PersonButton(String text, Person person) {
-    super(text);
-    addActionListener(e -> {
-      JPanel panel = new JPanel();
-      panel.setLayout(new GridLayout(7, 1));
-      TextField name = new TextField(person.getName(), panel);
-      TextField surname = new TextField(person.getSurname(), panel);
-      TextField country = new TextField(person.getCountry(), panel);
-      TextField city = new TextField(person.getCity(), panel);
-      TextField address = new TextField(person.getAddress(), panel);
-      TextField phoneNumber = new TextField(person.getPhoneNumber(), panel);
-      TextField eMail = new TextField(person.getMail(), panel);
-      int i = JOptionPane.showConfirmDialog(null, panel);
-      if (i == JOptionPane.OK_OPTION) {
-        person.setName(name.getText());
-        person.setSurname(surname.getText());
-        person.setCountry(country.getText());
-        person.setCity(city.getText());
-        person.setAddress(address.getText());
-        person.setPhoneNumber(phoneNumber.getText());
-        person.setMail(eMail.getText());
-      }
-    });
   }
 }
 
