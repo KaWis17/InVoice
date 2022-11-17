@@ -5,6 +5,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.io.IOException;
+import java.sql.SQLException;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -85,9 +86,13 @@ public class UserInterface extends JFrame {
     //GRASP - Creator - instances of UserInterface closely use instances of Button
     final Button addProduct = new Button("ADD");
     addProduct.addActionListener(e -> {
-      invoice.addRecord(descriptionField.getText(),
-              Double.parseDouble(unitPriceField.getText()),
-              Integer.parseInt(quantityField.getText()));
+      try {
+        invoice.addRecord(descriptionField.getText(),
+                Double.parseDouble(unitPriceField.getText()),
+                Integer.parseInt(quantityField.getText()));
+      } catch (SQLException ex) {
+        throw new RuntimeException(ex);
+      }
       model.addRow(new Object[]{invoice.records.size(),
               descriptionField.getText(),
               unitPriceField.getText(),
@@ -128,6 +133,13 @@ public class UserInterface extends JFrame {
     button.addActionListener(e -> {
       invoice.setInvoiceNumber(invoiceNrField.getText());
       invoice.setPlace(placeField.getText());
+
+      //Adding invoice to DB
+      try {
+        new InvoiceMariaDB().addInvoice(invoice);
+      } catch (SQLException ex) {
+        throw new RuntimeException(ex);
+      }
 
       try {
         //GRASP - Creator

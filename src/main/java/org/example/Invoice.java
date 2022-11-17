@@ -23,14 +23,6 @@ public class Invoice {
     //GRASP - Creator
     // instances of Invoice have the initializing information for instances of Person
     client = new Person();
-
-    try {
-      new MariaDbConnect();
-      MariaDbConnect.addInvoice(this);
-    } catch (SQLException ex) {
-      throw new RuntimeException(ex);
-    }
-
   }
 
   /**
@@ -70,7 +62,7 @@ public class Invoice {
   // delegate creation of product to record, reduces dependency between classes
   //GRASP - High Cohesion
   // Low Coupling = High Cohesion
-  public void addRecord(final String name, final double unitPrice, final int quantity) {
+  public void addRecord(final String name, final double unitPrice, final int quantity) throws SQLException {
     records.add(new Record(name, unitPrice, quantity));
   }
 }

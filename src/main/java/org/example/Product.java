@@ -11,16 +11,21 @@ public class Product {
 
   //GRASP - Information expert
   // obvious that this class knows the most about its own
-  /* default */ Product(final String name, final double unitPrice) {
+  /* default */ Product(final String name, final double unitPrice) throws SQLException {
     this.name = name;
     this.unitPrice = unitPrice;
+    new ProductMariaDB().addProduct(this);
+  }
 
-    try {
-      new MariaDbConnect();
-      MariaDbConnect.addProduct(name, unitPrice);
-    } catch (SQLException ex) {
-      throw new RuntimeException(ex);
-    }
+  public int getDBid() throws SQLException {
+    return new ProductMariaDB().getId();
+  }
 
+  public String getName() {
+    return name;
+  }
+
+  public double getUnitPrice() {
+    return unitPrice;
   }
 }
